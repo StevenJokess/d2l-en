@@ -46,7 +46,7 @@ import tarfile
 import hashlib
 
 DATA_HUB = dict()  #@save
-DATA_URL = 'http://d2l-data.s3-accelerate.amazonaws.com/'  #@save
+DATA_URL = 'http://d2l-data.s3-accelerate.amazonaws.com/'
 ```
 
 The following `download` function downloads a dataset,
