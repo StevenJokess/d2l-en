@@ -175,9 +175,7 @@ it chains each block in the list together,
 passing the output of each as the input to the next.
 Note that until now, we have been invoking our models
 via the construction `net(X)` to obtain their outputs.
-This is actually just shorthand for `net.forward(X)`,
-a slick Python trick achieved via
-the Block class's `__call__` function.
+This is actually just shorthand for `net.__call__(X)`.
 :end_tab:
 
 :begin_tab:`tensorflow`
@@ -383,11 +381,11 @@ class MySequential(nn.Block):
 class MySequential(nn.Module):
     def __init__(self, *args):
         super().__init__()
-        for block in args:
-            # Here, `block` is an instance of a `Module` subclass. We save it
+        for idx, module in enumerate(args):
+            # Here, `module` is an instance of a `Module` subclass. We save it
             # in the member variable `_modules` of the `Module` class, and its
             # type is OrderedDict
-            self._modules[block] = block
+            self._modules[str(idx)] = module
 
     def forward(self, X):
         # OrderedDict guarantees that members will be traversed in the order
@@ -429,16 +427,16 @@ parameters also need to be initialized.
 :end_tab:
 
 :begin_tab:`pytorch`
-In the `__init__` method, we add every block
+In the `__init__` method, we add every module
 to the ordered dictionary `_modules` one by one.
 You might wonder why every `Module`
 possesses a `_modules` attribute
 and why we used it rather than just
 define a Python list ourselves.
 In short the chief advantage of `_modules`
-is that during our block's parameter initialization,
+is that during our module's parameter initialization,
 the system knows to look inside the `_modules`
-dictionary to find sub-blocks whose
+dictionary to find sub-modules whose
 parameters also need to be initialized.
 :end_tab:
 
@@ -675,23 +673,22 @@ chimera.add(FixedHiddenMLP())
 chimera(X)
 ```
 
-## Compilation
+## Efficiency
 
-:begin_tab:`mxnet, tensorflow`
+:begin_tab:`mxnet`
 The avid reader might start to worry
 about the efficiency of some of these operations.
 After all, we have lots of dictionary lookups,
 code execution, and lots of other Pythonic things
 taking place in what is supposed to be
 a high-performance deep learning library.
-The problems of Python's [global interpreter lock](https://wiki.python.org/moin/GlobalInterpreterLock) are well known. In the context of deep learning,
-we worry that our extremely fast GPU(s)
+The problems of Python's [global interpreter lock](https://wiki.python.org/moin/GlobalInterpreterLock) are well known. 
+In the context of deep learning,
+we may worry that our extremely fast GPU(s)
 might have to wait until a puny CPU
 runs Python code before it gets another job to run.
 The best way to speed up Python is by avoiding it altogether.
-:end_tab:
 
-:begin_tab:`mxnet`
 One way that Gluon does this is by allowing for
 *hybridization*, which will be described later.
 Here, the Python interpreter executes a block
@@ -704,6 +701,35 @@ leads down different branches on different passes through the net.
 We recommend that the interested reader checks out
 the hybridization section (:numref:`sec_hybridize`)
 to learn about compilation after finishing the current chapter.
+:end_tab:
+
+:begin_tab:`pytorch`
+The avid reader might start to worry
+about the efficiency of some of these operations.
+After all, we have lots of dictionary lookups,
+code execution, and lots of other Pythonic things
+taking place in what is supposed to be
+a high-performance deep learning library.
+The problems of Python's [global interpreter lock](https://wiki.python.org/moin/GlobalInterpreterLock) are well known. 
+In the context of deep learning,
+we may worry that our extremely fast GPU(s)
+might have to wait until a puny CPU
+runs Python code before it gets another job to run.
+:end_tab:
+
+:begin_tab:`tensorflow`
+The avid reader might start to worry
+about the efficiency of some of these operations.
+After all, we have lots of dictionary lookups,
+code execution, and lots of other Pythonic things
+taking place in what is supposed to be
+a high-performance deep learning library.
+The problems of Python's [global interpreter lock](https://wiki.python.org/moin/GlobalInterpreterLock) are well known. 
+In the context of deep learning,
+we may worry that our extremely fast GPU(s)
+might have to wait until a puny CPU
+runs Python code before it gets another job to run.
+The best way to speed up Python is by avoiding it altogether.
 :end_tab:
 
 ## Summary

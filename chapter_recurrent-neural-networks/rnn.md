@@ -38,7 +38,9 @@ Given a minibatch of examples $\mathbf{X} \in \mathbb{R}^{n \times d}$ with batc
 $$\mathbf{H} = \phi(\mathbf{X} \mathbf{W}_{xh} + \mathbf{b}_h).$$
 :eqlabel:`rnn_h_without_state`
 
-In :eqref:`rnn_h_without_state`, we have the weight parameter $\mathbf{W}_{xh} \in \mathbb{R}^{d \times h}$, the bias parameter $\mathbf{b}_h \in \mathbb{R}^{1 \times h}$, and the number of hidden units $h$, for the hidden layer. Next, the hidden variable $\mathbf{H}$ is used as the input of the output layer. The output layer is given by
+In :eqref:`rnn_h_without_state`, we have the weight parameter $\mathbf{W}_{xh} \in \mathbb{R}^{d \times h}$, the bias parameter $\mathbf{b}_h \in \mathbb{R}^{1 \times h}$, and the number of hidden units $h$, for the hidden layer. 
+Thus, broadcasting (see :numref:`subsec_broadcasting`) is applied during the summation.
+Next, the hidden variable $\mathbf{H}$ is used as the input of the output layer. The output layer is given by
 
 $$\mathbf{O} = \mathbf{H} \mathbf{W}_{hq} + \mathbf{b}_q,$$
 
@@ -73,6 +75,11 @@ we know that these variables captured and retained the sequence's historical inf
 Since the hidden state uses the same definition of the previous time step in the current time step, the computation of :eqref:`rnn_h_with_state` is *recurrent*. Hence, neural networks with hidden states
 based on recurrent computation are named
 *recurrent neural networks*.
+Layers that perform
+the computation of :eqref:`rnn_h_with_state`
+in RNNs 
+are called *recurrent layers*.
+
 
 There are many different ways for constructing RNNs.
 RNNs with a hidden state defined by :eqref:`rnn_h_with_state` are very common.
@@ -179,8 +186,10 @@ we aim to predict the next token based on
 the current and past tokens,
 thus we shift the original sequence by one token
 as the labels.
-Now we illustrate how RNNs can be used to build a language model. 
-Let the minibatch size be 1, and the sequence of the text be "machine".
+Bengio et al. first proposed
+to use a neural network for language modeling :cite:`Bengio.Ducharme.Vincent.ea.2003`.
+In the following we illustrate how RNNs can be used to build a language model.
+Let the minibatch size be one, and the sequence of the text be "machine".
 To simplify training in subsequent sections,
 we tokenize text into characters rather than words
 and consider a *character-level language model*.
@@ -278,4 +287,3 @@ to evaluate such models.
 :begin_tab:`tensorflow`
 [Discussions](https://discuss.d2l.ai/t/1051)
 :end_tab:
-

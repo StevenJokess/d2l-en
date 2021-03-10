@@ -18,7 +18,7 @@ given a dataset with features $\mathbf{X}$
 and labels $\mathbf{y}$,
 we might try finding it by solving the following optimization problem:
 
-$$f^*_\mathcal{F} := \mathop{\mathrm{argmin}}_f L(\mathbf{X}, \mathbf{y}, f) \text{ subject to } f \in \mathcal{F}.$$
+$$f^*_\mathcal{F} \stackrel{\mathrm{def}}{=} \mathop{\mathrm{argmin}}_f L(\mathbf{X}, \mathbf{y}, f) \text{ subject to } f \in \mathcal{F}.$$
 
 It is only reasonable to assume that if we design a different and more powerful architecture $\mathcal{F}'$ we should arrive at a better outcome. In other words, we would expect that $f^*_{\mathcal{F}'}$ is "better" than $f^*_{\mathcal{F}}$. However, if $\mathcal{F} \not\subseteq \mathcal{F}'$ there is no guarantee that this should even happen. In fact, $f^*_{\mathcal{F}'}$ might well be worse. 
 As illustrated by :numref:`fig_functionclasses`,
@@ -136,7 +136,6 @@ class Residual(nn.Module):  #@save
             self.conv3 = None
         self.bn1 = nn.BatchNorm2d(num_channels)
         self.bn2 = nn.BatchNorm2d(num_channels)
-        self.relu = nn.ReLU(inplace=True)
 
     def forward(self, X):
         Y = F.relu(self.bn1(self.conv1(X)))
@@ -406,7 +405,7 @@ We train ResNet on the Fashion-MNIST dataset, just like before.
 #@tab all
 lr, num_epochs, batch_size = 0.05, 10, 256
 train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size, resize=96)
-d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr)
+d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr, d2l.try_gpu())
 ```
 
 ## Summary
@@ -429,7 +428,7 @@ d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr)
    activation, and convolution" structure. Make this improvement
    yourself. See Figure 1 in :cite:`He.Zhang.Ren.ea.2016*1`
    for details.
-1. Why cannot we just increase the complexity of functions without bound, even if the function classes are nested?
+1. Why can't we just increase the complexity of functions without bound, even if the function classes are nested?
 
 :begin_tab:`mxnet`
 [Discussions](https://discuss.d2l.ai/t/85)
